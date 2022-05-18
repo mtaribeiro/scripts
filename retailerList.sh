@@ -15,30 +15,23 @@ then
   exit 2
 fi
 
-retailers="$(
-  cd ./config;
-  retailerList=''
-  #for retailer in $retailers
-  for retailer in $(ls -d */)
-  do
-   # echo "Running "$retailer
-    retailerList+=${retailer//\// }
-  done
-  # works like a return
-  echo $retailerList
-)"
-#echo "valor ret="$retailers
-for retailer in $retailers
+retailerList=''
+#for retailer in $retailers
+for retailer in $(ls -d ./config/*/)
 do
-  echo "Running "$retailer
-  export NODE_ENV=${retailer}
-  export NODE_APP_INSTANCE=qa05;
-  #npx wdio wdio.conf.js --spec=./test/footer/footer.spec.js
-  #node_modules/@wdio/cli/bin/wdio.js wdio.conf.js --spec=./test/footer/footer.spec.js
-  if [ "$2" == "bs" ]
-  then
-    npx wdio wdio.conf.browserstack.js --spec $1
-  else
-    npx wdio wdio.conf.js --spec $1
+  # echo "Running "$retailer
+  retailerName="${retailer//\.\/config\//}"
+  retailerName="${retailerName//\// }"
+  retailerList+=$retailerName
+
+  if [[ "$1" =~ ^-{0,2}l(ine)? ]]
+  then 
+    echo $retailerName
   fi
+
 done
+# works like a return
+if ! [[ "$1" =~ ^-{0,2}l(ine)? ]]
+then
+  echo $retailerList
+fi
